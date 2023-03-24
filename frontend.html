@@ -8,17 +8,16 @@
     <style>
         table,th,td {
             border: 1px solid black;
-            border-collapse: collapse;
-        }
-    
-        td,th {
             padding: 10px;
+        } 
+        body{
+            background-color: lightgoldenrodyellow;
         }
     </style>
 </head>
 <body>
     <div class="container ">
-        <h1 style="text-align: center; color: lightcoral;">產品查詢</h1>
+        <h1 style="text-align: center; color: lightcoral;"><strong>產品查詢</strong></h1>
         <form class ="row justify-content-center " id = "search">
                 <input class= " col-5 m-1 " placeholder ="產品名稱查詢" id ="name" type ="text">
                 <select class= " col-5 m-1" aria-label="Default select example" placeholder ="產品" id="type">
@@ -28,48 +27,45 @@
                     <option value= "3C">3C</option>
                     <option value= "全部">全部</option>
                 </select>                
-                <input class= "col-3 m-1" placeholder="最低價" id= "lowest" type= "text">
+                <input class= "col-3 m-1" placeholder="最低價" id= "lowest"  type= "text">
                 <input class= "col-3 m-1" placeholder="最高價" id= "highest" type= "text">     
                 <select class= "col-3 m-1" id="sort">
                     <option selected value= "">排序</option>
-                    <option value= "">價格(高->低)</option>
-                    <option value= "">價格(低->高)</option>
-                    <option value= "">數量(高->低)</option>
-                    <option value= "">數量(低->高)</option>
+                    <option value= "phl">價格(高->低)</option>
+                    <option value= "plh">價格(低->高)</option>
+                    <option value= "qhl">數量(高->低)</option>
+                    <option value= "qlh">數量(低->高)</option>
                 </select>
-                <!-- <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select> -->
-                <button class=" col-1 btn btn-danger" type="submit">查詢</button>
+                <button class=" col-1 btn btn-danger " id="Searchbtn" type="submit">查詢</button>
         </form>
     </div>
     <div id="container"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-<script type="module">
+    <script type="module">
     import { product } from "./product.js";
-    console.log(product);
-    const seach = document.getElementById('search');
+    const form = document.getElementById('search');
     let container = document.getElementById('container');
-    let inputname = document.getElementById('name');
-    let selectedtype = document.getElementById('type');
-    let lowest = document.getElementById('lowest');
-    let highest = document.getElementById('highest');
-    let name = inputname.value;
-    let type = selectedtype.value;
-    let lowestprice = lowest.value;
-    let highestprice = highest.value;   
-    let data = query(id, name, type, lowest, highest);
-
+    // window.onload = function(){};
+    form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    let name = document.getElementById('name').value;
+    let type = document.getElementById('type').value;
+    let sortt = document.getElementById('sort').value;
+    let lowest = document.getElementById('lowest').value;
+    let highest = document.getElementById('highest').value;
+    if (highest == '') {highest = 9999999999;};
+    let productlist =  Fliter(product, name , type ,lowest,highest);
+    productlist = Sort(productlist, sortt);
+    CreateTable(productlist);
+    });
+    function CreateTable(productlist){
         let table = document.createElement("table");
-        table.setAttribute("class", "table table-hover");
+        table.setAttribute("class", "table ");
         table.setAttribute("id", "table");
         let thead = document.createElement("thead");
         let title = ["編號", "產品名稱", "數量", "價錢", "類型"];
         thead.setAttribute("class", "table-dark");
-        let tr, tr1 , td, td1, values;
+        let tr, tr1, td, values;
         tr = document.createElement("tr");
         title.forEach(item => {
             td = document.createElement("td");
@@ -79,22 +75,54 @@
         thead.append(tr);
         table.append(thead);
         container.append(table);
-        
         let tbody = document.createElement("tbody");
-        product.forEach(item1 => {
+        productlist.forEach(item1 => {
             tr1 = document.createElement("tr");
             values = Object.values(item1);
             values.forEach(elements => {
-                    td1 = document.createElement("td");
-                    td1.innerText = elements;
-                    tr1.append(td1);
-                });  
-                tbody.append(tr1);
-            }); 
-            table.append(tbody);
-            container.append(table);
+                td = document.createElement("td");
+                td.innerText = elements;
+                tr1.append(td);
+            });
+            tbody.append(tr1);
+        });
+        table.append(tbody);
+        container.append(table);
+    }  
+    function Fliter(items, name ,type, min, max) { 
+            return items.filter(x => x.ProductName.includes(name) && x.ProductType.includes(type) && x.Price >= min && x.Price <= max);
+        }
+    function Sort(items, sort){  
+        switch(sort){
+            case 'phl':
+        items.sort(function (x, y) {
+            return y.Price - x.Price;
+            });
+            return items;
+            break;
+            case 'plh':
+        items.sort(function (x, y) {
+            return x.Price - y.Price;
+        });
+            return items;
+            break;
+            case 'qhl':
+        items.sort(function (x, y) {
+            return y.Amount - x.Amount;
+        });
+            return items;
+            break;
+            case 'qlh':
+        items.sort(function (x, y) {
+            return x.Amount - y.Amount;
+        });
+            return items;
+            break; 
+        default:
+            return items;  
+        }
+        
+    } 
 </script>
-
-
 </body>
 </html>
