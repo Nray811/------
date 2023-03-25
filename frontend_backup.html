@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>前端綜合練習</title>
+    <title>前端練習-備份</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <style>
@@ -62,23 +62,22 @@
         let container = document.getElementById('container');
         console.log(product);
         window.onload = function(){
-        CreateTable(productlist);   
+        submit_click();
         }
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            let name = document.getElementById('name').value;
-            let type = document.getElementById('type').value;
-            let sortt = document.getElementById('sort').value;
-            let lowest = document.getElementById('lowest').value;
-            let highest = document.getElementById('highest').value;
-            if (highest == '') { highest = 99999;}
-            let productlist = Fliter(product, name, type, lowest, highest);
-            console.log(productlist);
-            productlist = Sort(productlist, sortt);
-            console.log(productlist);
-            CreateTable(productlist);
-        });
-
+        function submit_click(){
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                let name = document.getElementById('name').value;
+                let type = document.getElementById('type').value;
+                let sortt = document.getElementById('sort').value;
+                let lowest = document.getElementById('lowest').value;
+                let highest = document.getElementById('highest').value;
+                if (highest == '') { highest = 99999; }
+                let productlist = Fliter(product, name, type, lowest, highest);
+                productlist = Sort(productlist, sortt);
+                CreateTable(productlist);
+            });
+        }
         function CreateTable(productlist) {
             let table = document.createElement("table");
             table.setAttribute("class", "table ");
@@ -100,9 +99,11 @@
             productlist.forEach(item1 => {
                 tr1 = document.createElement("tr");
                 values = Object.values(item1);
-                values.forEach(elements => {
+                values.forEach((elements, index) => {
                     td = document.createElement("td");
                     td.innerText = elements;
+                    console.log(elements);
+                    // console.log(index);
                     tr1.append(td);
                 });
                 tbody.append(tr1);
